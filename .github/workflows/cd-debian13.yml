@@ -56,7 +56,6 @@ jobs:
         run: |
           apt-get update
           apt-get install -y \
-            # [CI reference] CI 中使用的核心依赖库
             libmimalloc-dev \
             libgit2-dev \
             zlib1g-dev \
@@ -68,12 +67,10 @@ jobs:
             libdbus-1-3 libglib2.0-0t64 libegl1 libgl-dev libxkbcommon0 \
             fonts-noto-cjk \
             ghostscript \
-            # [System Qt Fixes] 我们刚才修复的系统 Qt 依赖 (用于 --qt=system)
             qt6-base-dev \
             libqt6svg6-dev \
             libqt6networkauth6-dev \
             qt6-base-private-dev \
-            # [CD Specific] 打包专用工具
             fakeroot \
             debhelper \
             file \
