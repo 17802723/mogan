@@ -91,6 +91,7 @@ jobs:
       # ==========================================
       - name: Determine Version
         id: get_version
+        shell: bash
         run: |
           REF_NAME="${{ github.ref }}"
           MANUAL_VER="${{ inputs.manual_version }}"
