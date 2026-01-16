@@ -21,6 +21,7 @@ jobs:
       APPIMAGE_EXTRACT_AND_RUN: 1
       DEBIAN_FRONTEND: noninteractive
       XMAKE_ROOT: y
+      # [CI reference] 设置 Qt 平台为 offscreen，避免 GUI 初始化错误
       QT_QPA_PLATFORM: offscreen 
 
     steps:
@@ -82,6 +83,11 @@ jobs:
       # ==========================================
       - name: Config
         run: xmake config --yes -vD -m release --policies=build.ccache
+        # [Merged Strategy] 
+        # 1. 保留 --qt=system (为了打出依赖系统的 deb 包)
+        # 2. 增加 --policies=build.ccache (参照 CI)
+        # 3. 使用 release 模式
+        run: xmake config --yes -vD -m release --qt=system --policies=build.ccache
 
       - name: Build
         run: xmake build -vD stem
@@ -101,12 +107,17 @@ jobs:
             VERSION="$MANUAL_VER"
           elif [[ "$REF_NAME" == refs/tags/* ]]; then
             VERSION=${REF_NAME#refs/tags/}
+          if [ -n "${{ inputs.manual_version }}" ]; then
+            VERSION="${{ inputs.manual_version }}"
+          elif [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/}
             VERSION=${VERSION//\//}
           else
             VERSION=$(date +%Y.%m.%d)
           fi
           
           echo "Final Version Detected: $VERSION"
+          echo "Version: $VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       # ==========================================
@@ -134,4 +145,5 @@ jobs:
         with:
           prerelease: true
           files: |
+            mogan-stem-*-debian13-amd64.deb
             mogan-stem-*-debian13-amd64.deb
